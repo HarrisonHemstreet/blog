@@ -5,7 +5,7 @@ export const SITE: Site = {
   author: "Harrison Hemstreet",
   desc: "Harrison Hemstreet's blog on computer science and general interests.",
   title: "Harrison Hemstreet",
-  ogImage: "astropaper-og.jpg",
+  ogImage: "https://i.imgur.com/6aveDNY.jpg",
   lightAndDarkMode: true,
   postPerPage: 3,
 };
