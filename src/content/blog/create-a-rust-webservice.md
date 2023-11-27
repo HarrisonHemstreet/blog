@@ -21,7 +21,7 @@ ogImage: https://i.imgur.com/ffPQTa2.jpg
 
 ## Introduction
 
-Welcome to this comprehensive tutorial on building web services using Rust! Here, I'll guide you through my `webservice_tutorial` project, providing a template and detailed explanations to help you swiftly create your own web services. This tutorial focuses on Rust, Actix-Web, Docker, PostgreSQL, and Postman, highlighting complex aspects for a clear understanding.
+Welcome to this comprehensive tutorial on building web services using Rust! Here, I'll guide you through my `webservice_tutorial` project, providing a template and detailed explanations to help you swiftly create your own web services. This tutorial focuses on Rust, Actix-Web, Docker, PostgreSQL, and Postman, highlighting complex aspects for a clear understanding. You can find and use the template in your future projects on GitHub [here](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main).
 
 ## Prerequisites
 
