@@ -192,18 +192,15 @@ This Rust application leverages the Actix-Web framework to establish a basic web
      This function handles GET requests to the root URL (`"/"`), responding with "Hello, World!". The `#[get("/")]` attribute designates it as a handler for GET requests at the root path.
 
    - **Hello Handler**:
-
      ```rust
      #[get("/{name}")]
      async fn hello(name: web::Path<String>) -> impl Responder {
          format!("Hello {}!", &name)
      }
      ```
-
      This function manages GET requests to `/{name}` paths, greeting the user with their name extracted from the URL.
 
 3. **Main Function**:
-
    ```rust
    #[actix_web::main]
    async fn main() -> std::io::Result<()> {
@@ -213,7 +210,6 @@ This Rust application leverages the Actix-Web framework to establish a basic web
            .await
    }
    ```
-
    This function sets up and runs the server, binding it to `127.0.0.1:8080`. The `#[actix_web::main]` macro initializes the async runtime, and the `?` operator handles potential errors during binding.
 
 This code establishes a simple web server with two routes: a root route returning "Hello, World!" and a dynamic route for personalized greetings. Access these routes via a web browser or a tool like Postman at `http://127.0.0.1:8080/{name}`, replacing `{name}` with your desired name.
@@ -253,15 +249,15 @@ We've enhanced our Rust actix-web server to include additional modules and middl
 
 3. **Server Binding and Execution**:
 
-   ```rust
-   .bind(("127.0.0.1", 8080))?
+```rust
+.bind(("127.0.0.1", 8080))?
 
 
-   .run()
-   .await
-   ```
+.run()
+.await
+```
 
-   The server binds to `127.0.0.1:8080` and runs asynchronously, awaiting incoming requests.
+The server binds to `127.0.0.1:8080` and runs asynchronously, awaiting incoming requests.
 
 This enhanced server setup provides a structured and scalable foundation for building a feature-rich web service with Rust and Actix-Web.
 
