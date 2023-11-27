@@ -83,56 +83,57 @@ We use Docker to set up a PostgreSQL database quickly, avoiding the need to inst
 ### 1. Project Setup
 
 - **Our Cargo.toml**:
-  ```toml
-  [dependencies]
-  actix-web = "4.3.1"
-  dotenv = "0.15.0"
-  serde = { version = "1.0.160", features = ["derive"] }
-  serde_json = "1.0.96"
-  tokio = { version = "1.27.0", features = ["full"] }
-  chrono = { version = "0.4.28", features = ["serde"] }
-  sqlx = { version = "0.7.1", features = ["postgres", "runtime-tokio", "chrono", "uuid", "macros"] }
-  actix-cors = "0.6.4"
-  uuid = { version = "1.4.1", features = ["serde"] }
-  argon2 = "0.5.2"
-  jsonwebtoken = "9.1.0"
-  futures = "0.3.28"
-  base64 = "0.21.4"
-  ```
+
+```toml
+[dependencies]
+actix-web = "4.3.1"
+dotenv = "0.15.0"
+serde = { version = "1.0.160", features = ["derive"] }
+serde_json = "1.0.96"
+tokio = { version = "1.27.0", features = ["full"] }
+chrono = { version = "0.4.28", features = ["serde"] }
+sqlx = { version = "0.7.1", features = ["postgres", "runtime-tokio", "chrono", "uuid", "macros"] }
+actix-cors = "0.6.4"
+uuid = { version = "1.4.1", features = ["serde"] }
+argon2 = "0.5.2"
+jsonwebtoken = "9.1.0"
+futures = "0.3.28"
+base64 = "0.21.4"
+```
 
 ### 2. Database Setup
 
 - **SQL Files**: All SQL files are located in `webservice_tutorial/sql` with the initialization file at `webservice_tutorial/init.sql`.
 - **Docker Compose**: Below is our `docker-compose.yml` file. For a detailed explanation of this setup, refer to [this guide](https://onexlab-io.medium.com/docker-compose-postgres-initdb-ba0021deef76):
 
-  ```yaml
-  version: "3.6"
-  services:
-    postgres:
-      image: postgres
-      restart: always
-      environment:
-        - DATABASE_HOST=127.0.0.1
-        - POSTGRES_USER=root
-        - POSTGRES_PASSWORD=root
-        - POSTGRES_DB=webservice_tutorial
+```yaml
+version: "3.6"
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=webservice_tutorial
 
-      ports:
-        - "5440:5432"
-      volumes:
-        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-        - ./sql:/docker-entrypoint-initdb.d/sql
+    ports:
+      - "5440:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql:/docker-entrypoint-initdb.d/sql
 
-    pgadmin-compose:
-      image: dpage/pgadmin4
-      environment:
-        PGADMIN_DEFAULT_EMAIL: "test@test.com"
-        PGADMIN_DEFAULT_PASSWORD: "test"
-      ports:
-        - "16543:80"
-      depends_on:
-        - postgres
-  ```
+  pgadmin-compose:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "test@test.com"
+      PGADMIN_DEFAULT_PASSWORD: "test"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+```
 
 ### 3. webservice_tutorial Application Development
 
@@ -142,29 +143,29 @@ Utilize the `webservice_tutorial` project as a template, available on [GitHub](h
 
 - **Main Application**: The `src/main.rs` file initializes the Actix-Web server and routes:
 
-  ```rust
-  use actix_web::{get, web, App, HttpServer, Responder};
+```rust
+use actix_web::{get, web, App, HttpServer, Responder};
 
-  #[get("/")]
-  async fn index() -> impl Responder {
-      "Hello, World!"
-  }
+#[get("/")]
+async fn index() -> impl Responder {
+    "Hello, World!"
+}
 
-  #[get("/{name}")]
-  async fn hello(name: web::Path<String>) -> impl Responder {
-      format!("Hello {}!", &name)
-  }
+#[get("/{name}")]
+async fn hello(name: web::Path<String>) -> impl Responder {
+    format!("Hello {}!", &name)
+}
 
-  #[actix_web::main]
-  async fn main() -> std::io::Result<()> {
-      HttpServer::new(|| App::new().service(index).service(hello))
-          .bind(("127.0.0.1", 8080))?
-          .run()
-          .await
-  }
-  ```
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(index).service(hello))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
+}
+```
 
-  This code snippet is adapted from the [Actix homepage](https://actix.rs/).
+This code snippet is adapted from the [Actix homepage](https://actix.rs/).
 
 #### Explaining the Starting Application
 
@@ -172,45 +173,49 @@ This Rust application leverages the Actix-Web framework to establish a basic web
 
 1. **Imports**:
 
-   ```rust
-   use actix_web::{get, web, App, HttpServer, Responder};
-   ```
+```rust
+use actix_web::{get, web, App, HttpServer, Responder};
+```
 
-   This line brings in several essential components from the `actix_web` crate, including the `get` macro for GET request handlers, the `web` module for route registration, `App` for application setup, `HttpServer` for server configuration, and `Responder` for response handling.
+This line brings in several essential components from the `actix_web` crate, including the `get` macro for GET request handlers, the `web` module for route registration, `App` for application setup, `HttpServer` for server configuration, and `Responder` for response handling.
 
 2. **Route Handlers**:
 
-   - **Index Handler**:
+- **Index Handler**:
 
-     ```rust
-     #[get("/")]
-     async fn index() -> impl Responder {
-         "Hello, World!"
-     }
-     ```
+```rust
+#[get("/")]
+async fn index() -> impl Responder {
+    "Hello, World!"
+}
+```
 
-     This function handles GET requests to the root URL (`"/"`), responding with "Hello, World!". The `#[get("/")]` attribute designates it as a handler for GET requests at the root path.
+This function handles GET requests to the root URL (`"/"`), responding with "Hello, World!". The `#[get("/")]` attribute designates it as a handler for GET requests at the root path.
 
-   - **Hello Handler**:
-     ```rust
-     #[get("/{name}")]
-     async fn hello(name: web::Path<String>) -> impl Responder {
-         format!("Hello {}!", &name)
-     }
-     ```
-     This function manages GET requests to `/{name}` paths, greeting the user with their name extracted from the URL.
+- **Hello Handler**:
+
+```rust
+#[get("/{name}")]
+async fn hello(name: web::Path<String>) -> impl Responder {
+    format!("Hello {}!", &name)
+}
+```
+
+This function manages GET requests to `/{name}` paths, greeting the user with their name extracted from the URL.
 
 3. **Main Function**:
-   ```rust
-   #[actix_web::main]
-   async fn main() -> std::io::Result<()> {
-       HttpServer::new(|| App::new().service(index).service(hello))
-           .bind(("127.0.0.1", 8080))?
-           .run()
-           .await
-   }
-   ```
-   This function sets up and runs the server, binding it to `127.0.0.1:8080`. The `#[actix_web::main]` macro initializes the async runtime, and the `?` operator handles potential errors during binding.
+
+```rust
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(index).service(hello))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
+}
+```
+
+This function sets up and runs the server, binding it to `127.0.0.1:8080`. The `#[actix_web::main]` macro initializes the async runtime, and the `?` operator handles potential errors during binding.
 
 This code establishes a simple web server with two routes: a root route returning "Hello, World!" and a dynamic route for personalized greetings. Access these routes via a web browser or a tool like Postman at `http://127.0.0.1:8080/{name}`, replacing `{name}` with your desired name.
 
@@ -220,32 +225,32 @@ We've enhanced our Rust actix-web server to include additional modules and middl
 
 1. **Module Inclusions**:
 
-   ```rust
-   pub mod data_types;
-   pub mod db;
-   pub mod middleware;
-   pub mod routes;
-   pub mod utils;
-   ```
+```rust
+pub mod data_types;
+pub mod db;
+pub mod middleware;
+pub mod routes;
+pub mod utils;
+```
 
-   These lines import custom modules, each serving a specific purpose, such as `data_types` for data structures, `db` for database interactions, `middleware` for request handling, `routes` for defining route handlers, and `utils` for utility functions.
+These lines import custom modules, each serving a specific purpose, such as `data_types` for data structures, `db` for database interactions, `middleware` for request handling, `routes` for defining route handlers, and `utils` for utility functions.
 
 2. **Server Configuration**:
 
-   ```rust
-   HttpServer::new(move || {
-       App::new().wrap(middleware::handle_cors()).service(
-           web::scope("/api/v1")
-               .wrap(middleware::JWTAuth)
-               .wrap(middleware::CaptureUri)
-               .service(routes::auth())
-               .service(routes::blog())
-               .service(routes::tag()),
-       )
-   })
-   ```
+```rust
+HttpServer::new(move || {
+    App::new().wrap(middleware::handle_cors()).service(
+        web::scope("/api/v1")
+            .wrap(middleware::JWTAuth)
+            .wrap(middleware::CaptureUri)
+            .service(routes::auth())
+            .service(routes::blog())
+            .service(routes::tag()),
+    )
+})
+```
 
-   The server now uses middleware for CORS handling (`middleware::handle_cors()`) and is scoped under `/api/v1`. It incorporates JWT-based authentication (`middleware::JWTAuth`) and URI capturing (`middleware::CaptureUri`). The `routes` module links to specific route handlers.
+The server now uses middleware for CORS handling (`middleware::handle_cors()`) and is scoped under `/api/v1`. It incorporates JWT-based authentication (`middleware::JWTAuth`) and URI capturing (`middleware::CaptureUri`). The `routes` module links to specific route handlers.
 
 3. **Server Binding and Execution**:
 
