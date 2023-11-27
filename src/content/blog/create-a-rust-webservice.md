@@ -14,7 +14,7 @@ tags:
   - web service
   - api
 description: Learn how to build a web service using Rust, Actix-Web, PostgreSQL, SQLx and Docker!
-ogImage: https://cdn.midjourney.com/86afb322-6124-47e8-93d8-408488ae9b37/0_1.webp
+ogImage: https://i.imgur.com/ffPQTa2.jpg
 ---
 
 ## Table of contents
