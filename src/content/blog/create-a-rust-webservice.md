@@ -19,59 +19,70 @@ ogImage: https://cdn.midjourney.com/86afb322-6124-47e8-93d8-408488ae9b37/0_1.web
 
 ## Table of contents
 
-## Intro
+## Introduction
 
-In this tutorial, I will show you how to use my `webservice_tutorial` project as a template for you to easily start building your own web services using Rust, Actix-Web, Docker, PostgreSQL and Postman. The purpose of this tutorial is to explain the more complex portions of my project so that you can quickly understand and build your own web services in Rust.
+Welcome to this comprehensive tutorial on building web services using Rust! Here, I'll guide you through my `webservice_tutorial` project, providing a template and detailed explanations to help you swiftly create your own web services. This tutorial focuses on Rust, Actix-Web, Docker, PostgreSQL, and Postman, highlighting complex aspects for a clear understanding.
 
-## Required Tools
+## Prerequisites
+
+To follow along, ensure you have these tools installed:
 
 1. **Rust**
-   - Install Rust: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+   - Install Rust with this command:
+     ```bash
+     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+     ```
+
 2. **Docker Compose & Docker Desktop**
-   - make sure to install `docker compose`, not `docker-compose`. You can install both `docker compose` and Docker Desktop [here](https://docs.docker.com/desktop/). Just choose your operating system below and follow the instructions.
+
+   - Install `docker compose` (not `docker-compose`) and Docker Desktop from [Docker's official site](https://docs.docker.com/desktop/). Select your OS and follow the instructions.
+
 3. **Postman**
-   - download the Postman Desktop Client [here](https://www.postman.com/downloads/). You must use the desktop version for this to work.
+
+   - Download the Postman Desktop Client from [Postman's website](https://www.postman.com/downloads/). The desktop version is required.
+
 4. **Web Browser**
+
 5. **Terminal / Command Prompt**
-   - If you are on Windows, make sure to install WSL. You can learn how to do that [here](https://learn.microsoft.com/en-us/windows/wsl/install).
+
+   - Windows users should install WSL, as detailed [here](https://learn.microsoft.com/en-us/windows/wsl/install).
+
 6. **Text Editor or IDE**
-   - Check out JetBrain's new Rust IDE, [RustRover](https://www.jetbrains.com/rust/)
+   - Consider using JetBrain's Rust IDE, [RustRover](https://www.jetbrains.com/rust/).
 
-## Helpful Background Info
+## Background Knowledge
 
-1. **What is REST?**
-   - [How Did REST Come To Mean The Opposite of REST?](https://htmx.org/essays/how-did-rest-come-to-mean-the-opposite-of-rest/)
+Familiarize yourself with these concepts for a smoother learning experience:
+
+1. **Understanding REST**
+
+   - Read ["How Did REST Come To Mean The Opposite of REST?"](https://htmx.org/essays/how-did-rest-come-to-mean-the-opposite-of-rest/) for insights into REST.
+
 2. **API Best Practices**
-   - [OpenAPI Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0)
+   - Refer to the [OpenAPI Specification v3.1.0](https://spec.openapis.org/oas/v3.1.0) for API guidelines.
 
-## Why Rust?
+## Why Choose Rust for Web Services?
 
-Rust is an excellent choice for writing web services due to its emphasis on safety and performance. Its ownership model ensures memory safety and prevents common bugs seen in other languages, enhancing the reliability of web services. Rust’s concurrency model, built around zero-cost abstractions, allows for efficient handling of multiple requests, crucial for high-traffic web services. The language's performance is comparable to C/C++, making it ideal for compute-intensive tasks. Moreover, Rust's growing ecosystem, including frameworks like Actix-Web, provides the necessary tools for web development, making it a robust and future-proof choice for building scalable, efficient, and secure web services.
+Rust stands out for web services due to its safety and performance. Its ownership model guarantees memory safety, reducing common bugs. The language's concurrency model efficiently handles multiple requests, vital for high-traffic services. Rust's performance rivals C/C++, making it suitable for compute-intensive tasks. With a growing ecosystem, including frameworks like Actix-Web, Rust is a robust choice for scalable, efficient, and secure web services.
 
-## Why Actix-Web?
+## The Power of Actix-Web
 
-Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust. It is designed to provide a robust foundation for building efficient and high-performance web applications and services in Rust. Actix Web leverages the strengths of Rust, such as safety and concurrency, to offer a highly scalable and fast web framework suitable for a wide range of web development needs.
+Actix Web is a high-performance, pragmatic web framework for Rust. It harnesses Rust's strengths, such as safety and concurrency, to provide a scalable and fast framework for diverse web development needs.
 
-## Why SQLx?
+## SQLx: The Async SQL Crate for Rust
 
-SQLx is an async, pure Rust SQL crate featuring compile-time checked queries without a DSL. It supports PostgreSQL, MySQL, SQLite, and MSSQL and is fully compatible with async-std and tokio. SQLx provides a seamless and efficient way to interact with SQL databases using Rust, allowing developers to leverage Rust's strong type system and async capabilities for database operations. The crate's emphasis on compile-time query validation helps catch errors early in the development cycle, enhancing code reliability and maintainability.
+SQLx is an asynchronous, pure Rust SQL crate with compile-time checked queries, supporting PostgreSQL, MySQL, SQLite, and MSSQL. It's compatible with async-std and tokio, offering a seamless way to interact with SQL databases using Rust's type system and async capabilities.
 
-## Why Docker?
+## Docker: Simplifying Development
 
-In our project, we are utilizing Docker primarily for its ability to rapidly set up a PostgreSQL database. This approach simplifies development by eliminating the need to install and configure databases directly on personal computers. Docker containers offer a lightweight, isolated environment, ensuring that the PostgreSQL instance runs consistently across different machines. This consistency is crucial for development teams, as it avoids the "works on my machine" problem.
+We use Docker to set up a PostgreSQL database quickly, avoiding the need to install and configure databases on personal computers. Docker containers ensure consistent environments, solving the "works on my machine" problem and streamlining development workflows.
 
-Beyond this specific use case, Docker is renowned for its efficiency in creating, deploying, and running applications by using containers. Containers allow developers to package an application with all its dependencies into a single unit, which can then be easily moved between environments while maintaining consistency. This makes Docker an invaluable tool for modern development workflows, offering both flexibility and reliability.
-
-## Building the Web Service
+## Examining the Web Service
 
 ### 1. Project Setup
 
-- **Initialize the Project**: Start by creating a new Rust project using Cargo:
-  ```bash
-  cargo new webservice_tutorial
-  cd webservice_tutorial
-  ```
-- **Configure Cargo.toml**: Define your dependencies in `Cargo.toml`:
+- **Our Cargo.toml**:
   ```toml
   [dependencies]
   actix-web = "4.3.1"
@@ -91,13 +102,8 @@ Beyond this specific use case, Docker is renowned for its efficiency in creating
 
 ### 2. Database Setup
 
-- **Create SQL Files**: Define your database schema and initial data. Run:
-  ```bash
-  touch init.sql && mkdir sql && cd sql && touch auth.sql blog.sql tag.sql
-  ```
-- In your project, you have separate SQL files for different parts of your schema (`auth.sql`, `blog.sql`, `tag.sql`). These files contain SQL commands to create tables and insert initial data. Since this is a tutorial primarily on Rust, we will not be covering the how-to's of PostgreSQL. Go ahead and make sure you copy the init.sql file [here](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/init.sql) and the other sql files [here](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main/sql).
-
-- **Docker Compose**: Use Docker Compose to set up your PostgreSQL database:
+- **SQL Files**: All SQL files are located in `webservice_tutorial/sql` with the init file being located at `webservice_tutorial/init.sql`
+- **Docker Compose**: This is our docker-compose.yml file. If you would like to learn more about this setup, read more [here](https://onexlab-io.medium.com/docker-compose-postgres-initdb-ba0021deef76):
 
   ```yaml
   version: "3.6"
