@@ -102,8 +102,8 @@ We use Docker to set up a PostgreSQL database quickly, avoiding the need to inst
 
 ### 2. Database Setup
 
-- **SQL Files**: All SQL files are located in `webservice_tutorial/sql` with the init file being located at `webservice_tutorial/init.sql`
-- **Docker Compose**: This is our docker-compose.yml file. If you would like to learn more about this setup, read more [here](https://onexlab-io.medium.com/docker-compose-postgres-initdb-ba0021deef76):
+- **SQL Files**: All SQL files are located in `webservice_tutorial/sql` with the initialization file at `webservice_tutorial/init.sql`.
+- **Docker Compose**: Below is our `docker-compose.yml` file. For a detailed explanation of this setup, refer to [this guide](https://onexlab-io.medium.com/docker-compose-postgres-initdb-ba0021deef76):
 
   ```yaml
   version: "3.6"
@@ -136,11 +136,11 @@ We use Docker to set up a PostgreSQL database quickly, avoiding the need to inst
 
 ### 3. webservice_tutorial Application Development
 
-Use the `webservice_tutorial` project as a template in [GitHub](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main). The following is a high level explanation for the most complex pieces.
+Utilize the `webservice_tutorial` project as a template, available on [GitHub](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main). The following sections provide a comprehensive explanation of its most intricate components.
 
 #### Starting Application
 
-- **Main Application**: In `src/main.rs`, set up your Actix-Web server and routes:
+- **Main Application**: The `src/main.rs` file initializes the Actix-Web server and routes:
 
   ```rust
   use actix_web::{get, web, App, HttpServer, Responder};
@@ -164,11 +164,11 @@ Use the `webservice_tutorial` project as a template in [GitHub](https://github.c
   }
   ```
 
-- This helpful bit of code was taken from the [Actix homepage](https://actix.rs/).
+  This code snippet is adapted from the [Actix homepage](https://actix.rs/).
 
 #### Explaining the Starting Application
 
-This code is a Rust application using the Actix-Web framework to create a simple web server with two routes. Let's break it down:
+This Rust application leverages the Actix-Web framework to establish a basic web server with two routes. Here's a breakdown of its components:
 
 1. **Imports**:
 
@@ -176,13 +176,7 @@ This code is a Rust application using the Actix-Web framework to create a simple
    use actix_web::{get, web, App, HttpServer, Responder};
    ```
 
-   This line imports several components from the `actix_web` crate:
-
-   - `get`: A macro to define a handler for GET HTTP requests.
-   - `web`: A module that provides types and functions for route registration and data extraction.
-   - `App`: A class to set up and configure web applications.
-   - `HttpServer`: A class to create and configure an HTTP server.
-   - `Responder`: A trait used for types that can be converted into an HTTP response.
+   This line brings in several essential components from the `actix_web` crate, including the `get` macro for GET request handlers, the `web` module for route registration, `App` for application setup, `HttpServer` for server configuration, and `Responder` for response handling.
 
 2. **Route Handlers**:
 
@@ -195,18 +189,21 @@ This code is a Rust application using the Actix-Web framework to create a simple
      }
      ```
 
-     This function is a route handler for the root URL (`"/"`). When a GET request is made to the root URL, this function responds with the text "Hello, World!". The `#[get("/")]` attribute specifies that this is a handler for GET requests to the root path. The function returns a type that implements the `Responder` trait, which in this case is a simple string slice.
+     This function handles GET requests to the root URL (`"/"`), responding with "Hello, World!". The `#[get("/")]` attribute designates it as a handler for GET requests at the root path.
 
    - **Hello Handler**:
+
      ```rust
      #[get("/{name}")]
      async fn hello(name: web::Path<String>) -> impl Responder {
          format!("Hello {}!", &name)
      }
      ```
-     This function is a route handler for any GET request with a path of the form `/{name}`. It takes a `name` parameter from the path, which is extracted using `web::Path`. The function returns a formatted string greeting the provided name. The `#[get("/{name}")]` attribute specifies that this is a handler for GET requests where the path includes a name.
+
+     This function manages GET requests to `/{name}` paths, greeting the user with their name extracted from the URL.
 
 3. **Main Function**:
+
    ```rust
    #[actix_web::main]
    async fn main() -> std::io::Result<()> {
@@ -216,19 +213,14 @@ This code is a Rust application using the Actix-Web framework to create a simple
            .await
    }
    ```
-   - `#[actix_web::main]`: This attribute macro sets up the async runtime for Actix-Web.
-   - `HttpServer::new(...)`: This creates a new HTTP server. The closure passed to `new` sets up the application with the routes defined earlier.
-   - `App::new()`: This creates a new application instance.
-   - `.service(index).service(hello)`: These lines add the `index` and `hello` functions as services (or route handlers) to the application.
-   - `.bind(("127.0.0.1", 8080))?`: This binds the server to the local address `127.0.0.1` on port `8080`. The `?` operator is used for error handling; it will return the error if the `bind` operation fails.
-   - `.run()`: This starts the server asynchronously.
-   - `.await`: This awaits the future returned by `run`, effectively keeping the server running indefinitely or until an error occurs.
 
-In summary, this code sets up a basic web server with two routes: the root route (`"/"`) that responds with "Hello, World!" and a dynamic route (`"/{name}"`) that responds with a personalized greeting. The server listens on `127.0.0.1:8080`. Go ahead and try this out by going to your web browser (or Postman) and hit `http://127.0.0.1:8080/{name}`. Replace `{name}` with your name.
+   This function sets up and runs the server, binding it to `127.0.0.1:8080`. The `#[actix_web::main]` macro initializes the async runtime, and the `?` operator handles potential errors during binding.
+
+This code establishes a simple web server with two routes: a root route returning "Hello, World!" and a dynamic route for personalized greetings. Access these routes via a web browser or a tool like Postman at `http://127.0.0.1:8080/{name}`, replacing `{name}` with your desired name.
 
 #### Explaining the Changes
 
-We are now enhancing our Rust actix-web server to include additional modules and middleware for more robust functionality. The changes are as follows:
+We've enhanced our Rust actix-web server to include additional modules and middleware for more robust functionality. The updates are as follows:
 
 1. **Module Inclusions**:
 
@@ -240,13 +232,7 @@ We are now enhancing our Rust actix-web server to include additional modules and
    pub mod utils;
    ```
 
-   These lines import various custom modules:
-
-   - `data_types`: Defines data structures used across the application.
-   - `db`: Contains functionality for database interactions.
-   - `middleware`: Includes middleware functions for request handling.
-   - `routes`: Defines the various routes and their corresponding handlers.
-   - `utils`: Utility functions used in different parts of the application.
+   These lines import custom modules, each serving a specific purpose, such as `data_types` for data structures, `db` for database interactions, `middleware` for request handling, `routes` for defining route handlers, and `utils` for utility functions.
 
 2. **Server Configuration**:
 
@@ -263,203 +249,257 @@ We are now enhancing our Rust actix-web server to include additional modules and
    })
    ```
 
-   The server is now configured to use the defined middleware and route modules. `middleware::handle_cors()` applies Cross-Origin Resource Sharing (CORS) settings. The server is scoped to `/api/v1`, meaning all routes will be prefixed with this path. It also uses JWT-based authentication (`middleware::JWTAuth`) and captures URI for logging or analysis (`middleware::CaptureUri`). The services (`routes::auth()`, `routes::blog()`, `routes::tag()`) are linked to their respective route handlers defined in the `routes` module.
+   The server now uses middleware for CORS handling (`middleware::handle_cors()`) and is scoped under `/api/v1`. It incorporates JWT-based authentication (`middleware::JWTAuth`) and URI capturing (`middleware::CaptureUri`). The `routes` module links to specific route handlers.
 
 3. **Server Binding and Execution**:
 
    ```rust
    .bind(("127.0.0.1", 8080))?
+
+
    .run()
    .await
-   .expect("\nERROR: src/main.rs: server initialization fail\n");
    ```
 
-   The server binds to `127.0.0.1` on port `8080`. The `run` method starts the server asynchronously, and `await` keeps it running. The `expect` method provides an error message if the server fails to initialize.
+   The server binds to `127.0.0.1:8080` and runs asynchronously, awaiting incoming requests.
 
-These enhancements make our web server more structured and feature-rich, allowing for modular development and easier maintenance. Each component has a specific role, making the codebase more readable and scalable.
+This enhanced server setup provides a structured and scalable foundation for building a feature-rich web service with Rust and Actix-Web.
 
 #### Adding the Data Structures
 
-In the `webservice_tutorial/src/data_types/structs/mod.rs` file found [here](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/data_types/structs/mod.rs), we define several data structures that are essential for our Rust-based web service. This module serves as a central location for struct definitions, making our codebase more organized and maintainable.
+In the `webservice_tutorial/src/data_types/structs/mod.rs` file, accessible [here](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/data_types/structs/mod.rs), we meticulously define several pivotal data structures for our Rust-based web service. This module, acting as a centralized hub for struct definitions, significantly enhances the organization and maintainability of our codebase.
 
 1. **Imports**:
 
-   ```rust
-   use serde::{Deserialize, Serialize};
-   ```
+```rust
+use serde::{Deserialize, Serialize};
+```
 
-   The `serde` crate is used for serializing and deserializing data, a common requirement in web services for handling JSON data.
+We utilize the `serde` crate for its robust serialization and deserialization capabilities, a fundamental requirement in web services for processing JSON data.
 
 2. **Sub-Modules**:
 
-   - `pub mod blog; pub use self::blog::Blog;`
-   - `pub mod error_message; pub use self::error_message::ErrorMessage;`
-   - `pub mod auth; pub use self::auth::Auth; pub use self::auth::Status;`
-   - `mod tag; pub use self::tag::Tag; pub use self::tag::AssocTable; pub use self::tag::TagQueryParams;`
+```rust
+pub mod blog;
+pub use self::blog::Blog;
 
-   These lines define and publicly expose structs from sub-modules like `blog`, `error_message`, `auth`, and `tag`. This modular approach allows for separation of concerns, where each module focuses on a specific area of the application (e.g., authentication, blog-related data).
+pub mod error_message;
+pub use self::error_message::ErrorMessage;
+
+pub mod auth;
+
+mod tag;
+pub use self::tag::Tag;
+pub use self::tag::AssocTable;
+pub use self::tag::TagQueryParams;
+
+pub use self::auth::Auth;
+pub use self::auth::Status;
+```
+
+These lines strategically define and expose structs from sub-modules like `blog`, `error_message`, `auth`, and `tag`. This modular design fosters a separation of concerns, allowing each module to concentrate on a distinct aspect of the application, such as authentication or blog-related data.
 
 3. **Id Struct**:
 
-   ```rust
-   #[derive(Serialize, Deserialize, Debug)]
-   pub struct Id {
-       pub id: Option<i32>,
-   }
-   ```
+```rust
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Id {
+    pub id: Option<i32>,
+}
+```
 
-   The `Id` struct is a simple structure with an optional integer field `id`. It is marked with `Serialize` and `Deserialize` to enable easy conversion to and from JSON. The `Debug` trait is derived for convenient debugging.
+The `Id` struct, with its optional integer field `id`, is streamlined for JSON conversion, thanks to the `Serialize` and `Deserialize` traits. The inclusion of the `Debug` trait aids in effective debugging.
 
 4. **Display Implementation for Id**:
-   ```rust
-   impl std::fmt::Display for Id {
-       fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-           if let Some(id) = self.id {
-               return write!(f, "Id: {}", id);
-           }
-           write!(f, "Id: {}", "None")
-       }
-   }
-   ```
-   This implementation of the `Display` trait for the `Id` struct allows it to be formatted as a string. This is useful for logging or displaying the `Id` in a human-readable format. The implementation checks if `id` is `Some` and displays its value; otherwise, it displays `"None"`.
 
-These data structures and their organization into modules lay the foundation for a clean and efficient codebase, crucial for a scalable and maintainable web service. Make sure to check out each struct [here](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main/src/data_types/structs). The `Auth`, `Blog` and `Tag` structs are definitions for the data we want to take in from the users and the data we want to output to the users.
+```rust
+impl std::fmt::Display for Id {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "Id: {}", self.id.map_or_else(|| "None".to_string(), |id| id.to_string()))
+    }
+}
+```
+
+By implementing the `Display` trait for the `Id` struct, we enable its string formatting, which is invaluable for logging or presenting the `Id` in a user-friendly format. The implementation elegantly handles the presence or absence of `id`.
+
+These data structures, along with their modular organization, form the backbone of a streamlined and scalable codebase, essential for a robust web service. Explore each struct in detail [here](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main/src/data_types/structs). The `Auth`, `Blog`, and `Tag` structs are pivotal for managing user input and output.
 
 #### Connecting to the Database
 
-The "Connecting to the Database" section in our Rust web service project details the process of establishing a connection to the PostgreSQL database using the `sqlx` crate.
+Code found [here](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/db.rs)
 
 1. **Environment Variable**:
 
-   - The `DATABASE_URL` environment variable is used to retrieve the database connection string, crucial for connecting to the PostgreSQL database.
+- We leverage the `DATABASE_URL` environment variable to obtain the database connection string, a key element for PostgreSQL database connectivity.
 
 2. **Connection Process**:
 
-   - The function `connect` attempts to establish a connection pool to the database using `PgPool::connect`.
-   - It returns a `Result` type, which either contains a `PgPool` object on successful connection or an `ErrorMessage` struct upon failure.
+- The `connect` function endeavors to set up a connection pool to the database via `PgPool::connect`.
+- It yields a `Result` type, encapsulating either a `PgPool` object upon successful connection or an `ErrorMessage` struct in case of failure.
 
 3. **Error Handling**:
-   - The function includes comprehensive error handling to catch and format different types of database connection errors (`Configuration`, `Database`, and other unknown errors).
 
-This approach ensures a reliable and maintainable way of connecting to the database, centralizing the database connection logic and error handling.
+- The function incorporates comprehensive error handling to adeptly manage various database connection errors, including `Configuration`, `Database`, and other unforeseen errors.
+
+This methodology ensures a reliable and maintainable database connection strategy, centralizing the connection logic and error management.
 
 #### Auth Routes
 
-The "Auth Routes" section in our Rust web service project focuses on handling user authentication, including user creation and login. The code leverages various Rust crates and our own modules to implement these features securely and efficiently.
+[This part of the code](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/routes/auth.rs) focuses on user authentication processes, including user creation and login. The implementation harnesses various Rust crates and our custom modules for secure and efficient functionality.
 
 1. **Environment and Dependencies**:
 
-   - The code uses environment variables and external crates like `jsonwebtoken`, `argon2`, and `sqlx` to handle JWT token generation, password hashing, and database interactions.
+- The code utilizes environment variables and external crates like `jsonwebtoken`, `argon2`, and `sqlx` for JWT token generation, password hashing, and database interactions, respectively.
 
 2. **Structs for JWT Claims and Login Messages**:
 
-   - `Claims` and `Claims2` structs are defined for handling JWT claims. They hold user-related data and the expiration time for the token.
-   - `LoginMessage` struct is used to structure the response message after a successful login.
+- We define `Claims` and `Claims2` structs for JWT claims management, containing user data and token expiration information.
+- The `LoginMessage` struct structures the response message post successful login.
 
 3. **Create User Route (`/auth/create_user`)**:
 
-   - This endpoint allows users to register. It connects to the database, hashes the user's password using Argon2, and inserts the new user into the database.
-   - A JWT token is generated and returned in the response header, authorizing the newly created user.
+- This endpoint facilitates user registration, involving database connectivity, password hashing via Argon2, and new user insertion.
+- A JWT token is generated and returned in the response header, authenticating the new user.
 
 4. **Login Route (`/auth/login`)**:
 
-   - This endpoint authenticates users. It fetches the user from the database based on the username and verifies the password using Argon2.
-   - Upon successful authentication, a JWT token is generated with the user's claims and returned in the response header.
+- This endpoint authenticates users by retrieving and verifying user data from the database.
+- Successful authentication leads to JWT token generation with user claims, returned in the response header.
 
 5. **Error Handling**:
-   - Both routes include error handling to manage database connection issues and potential runtime errors during the authentication process.
 
-This implementation provides a secure and efficient way to handle user authentication in our Rust web service, leveraging the power of Actix-Web and Rust's strong type system.
+- Comprehensive error handling is incorporated in both routes to address database connectivity and runtime authentication issues.
+
+This robust implementation ensures secure and efficient user authentication in our Rust web service, leveraging Actix-Web and Rust's strong type system.
 
 #### Blog Routes
 
-The "Blog Routes" section in our Rust web service project provides various endpoints for managing blog-related data. These routes allow for creating, retrieving, updating, and deleting blog entries. The Tag routes follow nearly the same conventions. Here's an overview of each route:
+[This part of the code](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/routes/blog.rs) offers a suite of endpoints for blog data management, including creation, retrieval, updating, and deletion of blog entries. The Tag routes adhere to similar conventions. Here's an overview:
 
 1. **Create Blog (`/blog`)**:
 
-   - This POST route allows users to create a new blog entry. It accepts a `Blog` struct as JSON, inserts it into the database, and returns the newly created blog entry.
+- Users can create new blog entries via this POST route. It accepts a `Blog` struct in JSON format, inserts it into the database, and returns the new blog entry.
 
 2. **Get Featured Blogs (`/blog/featured`)**:
 
-   - The GET route fetches featured blog entries (limited to 2). It queries the database for blogs where `featured` is `TRUE` and returns them.
+- This GET route retrieves featured blog entries (up to 2), querying the database for blogs marked as `featured`.
 
 3. **Get Blog by ID or All Blogs (`/blog`)**:
 
-   - This GET route uses a query parameter `id` to fetch a specific blog entry. If `id` is not provided, it returns all blog entries. It dynamically adjusts the SQL query based on the presence of the `id`.
+- Depending on the presence of an `id` query parameter, this GET route fetches either a specific blog entry or all entries, dynamically adjusting the SQL query accordingly.
 
 4. **Update Blog (`/blog`)**:
 
-   - The PUT route updates an existing blog entry. It uses the `ON CONFLICT` SQL clause to handle the update, ensuring that the blog entry is updated if it exists or created if it doesn't.
+- The PUT route updates an existing blog entry, employing the `ON CONFLICT` SQL clause to handle updates or creation as needed.
 
 5. **Delete Blog (`/blog`)**:
-   - This DELETE route allows for the deletion of a blog entry based on its `id`. It removes the entry from the database and returns a `204 No Content` status on success.
 
-Each route includes error handling for database connection issues and potential runtime errors. These blog routes provide a comprehensive set of functionalities for blog management within the web service.
+- Users can delete blog entries based on `id` via this DELETE route, which removes the entry from the database and confirms with a `204 No Content` status.
+
+Each route includes robust error handling for database and runtime issues, providing a comprehensive blog management functionality within the web service.
 
 #### The HTTPServiceFactory
 
-The "HTTPServiceFactory" section of the Rust web service project (found [here](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/routes/mod.rs)) focuses on creating and organizing HTTP service factories for different modules like `auth`, `tag`, and `blog`. Each module corresponds to a specific set of functionalities within the web service. The code leverages Actix Web's `HttpServiceFactory` to group related request handlers.
+[In this part of the code](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/routes/mod.rs), we focus on creating and organizing HTTP service factories for modules like `auth`, `tag`, and `blog`. Each module corresponds to specific functionalities within the web service, and the code leverages Actix Web's `HttpServiceFactory` for grouping related request handlers.
 
 1. **Function Definitions**:
 
-   - Each function (`auth`, `tag`, `blog`) returns an implementation of `HttpServiceFactory`. This trait is used to construct HTTP services in Actix Web.
+- Functions like `auth`, `tag`, and `blog` return `HttpServiceFactory` implementations, crucial for constructing HTTP services in Actix Web.
 
 2. **Module Integration**:
 
-   - The functions integrate route handlers from their respective modules. For example, `auth()` returns a tuple containing `auth::login` and `auth::create_user`, representing the login and user creation endpoints.
+- These functions integrate route handlers from their respective modules, such as `auth()` combining `auth::login` and `auth::create_user`.
 
 3. **Purpose**:
-   - These functions provide a clean and organized way to group related routes and expose them as services. This structure enhances the modularity and readability of the web service code.
 
-By using `HttpServiceFactory`, the code effectively organizes different sets of functionalities (authentication, blog management, tag management) into distinct services, making the application more maintainable and scalable.
+- They offer a streamlined approach to grouping related routes and presenting them as services, enhancing the modularity and readability of the web service code.
+
+Utilizing `HttpServiceFactory`, the code effectively organizes different functionalities into distinct services, augmenting the application's maintainability and scalability.
 
 #### JWT Middleware
 
-The "JWT Middleware" section in our Rust web service project provides a middleware for handling JSON Web Token (JWT) authentication. This middleware ensures that routes are protected by verifying JWTs in incoming requests. Here's an overview of its functionality:
+[This part of the code](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/middleware/jwt_auth.rs) introduces middleware for JSON Web Token (JWT) authentication. This middleware is pivotal in securing routes by verifying JWTs in incoming requests.
 
 1. **Middleware Setup**:
 
-   - The middleware is defined as `JWTAuth` and `AuthMiddleware`. `JWTAuth` serves as a factory for creating instances of `AuthMiddleware`.
+- Defined as `JWTAuth` and `AuthMiddleware`, `JWTAuth` acts as a factory for `AuthMiddleware` instances.
 
 2. **Claims Structure**:
 
-   - A `Claims` struct is defined to deserialize the expected fields from the JWT, including user information and the token's expiration time.
+- A `Claims` struct is crafted to deserialize JWT fields, encompassing user information and token expiration.
 
 3. **Middleware Logic**:
 
-   - The middleware extracts the `Authorization` header from incoming requests and verifies the JWT using the `jsonwebtoken` crate.
-   - It checks the token's validity based on the provided secret key and algorithm (HS256).
-   - If the token is valid, the request is allowed to proceed. If it's invalid, an unauthorized error is returned.
+- The middleware extracts the `Authorization` header from requests and validates the JWT using the `jsonwebtoken` crate.
+- It assesses the token's validity based on the secret key and algorithm (HS256), allowing valid requests to proceed and rejecting invalid ones.
 
 4. **Environment Variables and Configuration**:
-   - Environment variables, like `JWT_SECRET`, are used to configure important aspects of the middleware, like the JWT decoding key.
-   - An optional `SKIP_AUTH` environment variable allows bypassing authentication for certain routes, which is useful during development or testing.
 
-This JWT middleware is essential for securing routes and ensuring that only authenticated users can access specific parts of the web service.
+- Environment variables like `JWT_SECRET` configure key aspects of the middleware, such as the JWT decoding key.
+- An optional `SKIP_AUTH` variable enables authentication bypass for certain routes, beneficial during development or testing.
+
+This JWT middleware is crucial for route security, ensuring access is restricted to authenticated users.
 
 #### CORS Middleware
 
-The "CORS Middleware" in the Rust web service project is designed to handle Cross-Origin Resource Sharing (CORS) settings. CORS is crucial for allowing or restricting web applications from different domains to interact with the service. This middleware is implemented using the `actix_cors` crate.
+[This part of the code](https://github.com/HarrisonHemstreet/webservice_tutorial/blob/main/src/middleware/handle_cors.rs) handles Cross-Origin Resource Sharing (CORS) settings, a key aspect for enabling interactions between different domain web applications and the service. Implemented using the `actix_cors` crate, it offers:
 
 1. **Environment Variables**:
 
-   - The middleware uses environment variables to dynamically set the allowed origins. `FRONTEND_URL` is used for the production environment, and `DEV_FRONTEND_URL` is used in development environments.
+- Environment variables dynamically set allowed origins, with `FRONTEND_URL` for production and `DEV_FRONTEND_URL` for development.
 
 2. **Configuration**:
-   - The `Cors::permissive()` method is used to create a new CORS middleware instance.
-   - The middleware is configured to allow requests from the specified origin (`allowed_origin`), which is determined based on the build configuration (debug or release).
-   - It is set to accept any HTTP method (`allow_any_method`) and any header (`allow_any_header`).
 
-This setup ensures flexibility in handling CORS policies, allowing seamless interaction between the frontend and backend across different environments.
+- `Cors::permissive()` creates a CORS middleware instance.
+- It's configured to permit requests from specified origins, accepting any HTTP method and header, based on the build environment.
+
+This setup ensures flexible CORS policy management, facilitating frontend-backend interactions across various environments.
 
 ### Using webservice_tutorial as a Template
 
-Now that all that is explained, you should be able to easily take the current [webservice_tutorial project](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main) and be able to extend it for all your web service needs! In order to use this project as a starting platform for yourself, go to the project page on [GitHub](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main). Next, find the green button that says, `Use this template`. Click `Create a new repository`. You should then be able to create a new repo from your own account.
+With this comprehensive guide, you're now equipped to leverage the [webservice_tutorial project](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main) as a foundation for your web service endeavors! To start, visit the project page on [GitHub](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main), click the `Use this template` green button, and `Create a new repository` from your account. This will set you on the path to building your custom web service with ease.
+
+## Next Steps for You
+
+Here are some of the things you should add to make `webservice_tutorial` your own!
+
+### 1. Testing and Deployment
+
+- **Testing**: Implement unit and integration tests in the `tests` directory. Test individual components and their integration, ensuring the application behaves as expected.
+- **Deployment**: Consider deploying the application using Docker or a cloud service like AWS, GCP, or Azure. Ensure environment variables and secrets are securely managed.
+
+### 2. Continuous Integration/Continuous Deployment (CI/CD)
+
+- **CI/CD Setup**: Set up CI/CD pipelines using tools like GitHub Actions, GitLab CI, or Jenkins. Automate testing, building, and deployment processes to ensure code quality and streamline deployment.
+
+### 3. Monitoring and Logging
+
+- **Monitoring Tools**: Implement monitoring and logging tools like Prometheus, Grafana, or ELK Stack to track application performance and troubleshoot issues.
+
+### 4. Security Considerations
+
+- **Security Practices**: Implement security best practices, such as HTTPS, secure handling of JWTs, SQL injection prevention, and regular dependency updates.
+
+### 5. Documentation and API Specification
+
+- **Documentation**: Create comprehensive documentation for the API, possibly using tools like Swagger or Redoc to generate interactive API documentation.
+
+### 6. Client-Side Development
+
+- **Frontend Integration**: If a frontend is part of the project, integrate it with the backend API, ensuring seamless interaction between the two.
+
+### 7. Feedback and Iteration
+
+- **Iterative Development**: Continuously gather feedback and iterate on the application, adding features, fixing bugs, and improving performance based on user needs and technological advancements.
 
 ## Conclusion
 
-In conclusion, the `webservice_tutorial` project is a comprehensive guide to building a web service using Rust, Actix-Web, SQLx, and Docker. This tutorial covers everything from setting up the environment and database to developing a robust web application with features like JWT authentication and CORS middleware. By following this guide, developers can leverage Rust's safety and performance benefits, creating scalable and efficient web services. The modular approach and detailed explanations of each component make this project an excellent starting point for anyone looking to dive into web development with Rust.
+The `webservice_tutorial` project stands as a testament to the power and versatility of Rust in web service development. This comprehensive guide skillfully navigates through the intricacies of using Rust, Actix-Web, SQLx, and Docker to construct a robust and efficient web application. From the initial setup of the environment and database to the implementation of advanced features like JWT authentication and CORS middleware, this tutorial encapsulates the essence of modern web development practices.
 
-The project is structured to be easily extendable, allowing you to adapt and build upon the foundational elements for your specific needs. The use of environment variables, middleware, and organized routes ensures that the application is both secure and maintainable.
+What sets this project apart is its emphasis on Rust's safety and performance capabilities, which are crucial for developing scalable web services. The tutorial's modular design and thorough explanations of each component render it an invaluable resource for both novice and experienced developers venturing into Rust-based web development.
 
-For those looking to start their own projects, the `webservice_tutorial` on [GitHub](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main) serves as a valuable template. Simply use the "Use this template" feature on GitHub to create a new repository and begin customizing it for your purposes. This approach streamlines the development process, giving you a solid foundation to build upon, and allowing you to focus on the unique aspects of your web service.
+The project's architecture is meticulously crafted for extensibility, allowing developers to seamlessly integrate their unique requirements and expand upon the core functionalities. The strategic use of environment variables, middleware, and well-organized routes not only fortifies the application's security but also enhances its maintainability.
+
+For developers poised to embark on their web service projects, the `webservice_tutorial` available on [GitHub](https://github.com/HarrisonHemstreet/webservice_tutorial/tree/main) is a treasure trove of resources. By utilizing the "Use this template" feature on GitHub, one can effortlessly create a new repository, inheriting a robust framework to tailor and evolve. This approach not only accelerates the development journey but also allows developers to concentrate on crafting the unique features and functionalities of their web service.
+
+In essence, the `webservice_tutorial` is more than just a guide; it's a springboard into the realm of high-performance web services, empowering developers to harness the full potential of Rust in creating cutting-edge web solutions.
